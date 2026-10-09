@@ -1,7 +1,8 @@
 import { Toaster } from "react-hot-toast"
 import Login from "./pages/Login"
 import Drive from "./pages/Drive"
-import { Navigate } from "react-router-dom"
+import { Routes, Route, Navigate } from "react-router-dom"
+
 
 
 const App = () => {
