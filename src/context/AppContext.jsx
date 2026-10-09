@@ -76,7 +76,7 @@ export const AppProvider = ({ children }) => {
     register,
     logout,
     isLoading,
-    isAuthenticated: !!user,
+    isAuthenticated: !!user, // false -> user es null o undefined, true -> user existe como un objeto
   };
 
   return (

@@ -12,7 +12,12 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login mode="login" />} />
         <Route path="/register" element={<Login mode="register" />} />
-        <Route path="/" element={<Drive />} />
+
+        {/* Private routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Drive />} />
+        </Route>
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
