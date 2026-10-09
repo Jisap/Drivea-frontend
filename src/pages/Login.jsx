@@ -1,5 +1,8 @@
+import { LockIcon, MailIcon, UserIcon } from "lucide-react";
 import { useState } from "react"
 import { useNavigate } from "react-router-dom";
+import { Input } from "../components/ui/Input";
+import { Button } from "../components/ui/Button";
 
 
 
@@ -18,6 +21,10 @@ const Login = ({ mode = "login" }) => {
   const updateField = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
+
+  const handleSubmit = async (e) => {
+
+  }
 
   return (
     <div className="min-h-screen text-zinc-900 flex flex-col md:flex-row">
@@ -53,6 +60,65 @@ const Login = ({ mode = "login" }) => {
       </div>
 
       {/* Right Auth Form */}
+      <div className="md:w-1/2 p-8 md:p-12 lg:p-16 flex items-center justify-center bg-white">
+        <div className="w-full max-w-md space-y-6 animate-fade-in">
+          <div>
+            <h3 className="text-2xl font-medium text-zinc-900">
+              {isLoading ? "Create an account" : "Welcome back"}
+            </h3>
+
+            <p className="text-sm text-zinc-500 mt-1">
+              {isRegister
+                ? "Enter your details below to get started with 1 GB free storage"
+                : "Enter your credentials to access your Drive"
+              }
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {isRegister && (
+              <Input
+                label="Full Name"
+                icon={UserIcon}
+                placeholder="John Doe"
+                value={form.name}
+                onChange={(e) => updateField("name", e.target.value)}
+                required
+              />
+            )}
+            <Input
+              label="Email Address"
+              type="email"
+              icon={MailIcon}
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={(e) => updateField("email", e.target.value)}
+              required
+            />
+
+            <Input
+              label="Password"
+              type="password"
+              icon={LockIcon}
+              placeholder="********"
+              value={form.password}
+              onChange={(e) => updateField("password", e.target.value)}
+              required
+            />
+
+            <Button
+              type="submit"
+              variant="primary"
+              className="w-full py-3"
+              isLoading={isLoading}
+            >
+              <span className="font-medium text-base">
+                {isRegister ? "Register Account" : "Sign In"}
+              </span>
+            </Button>
+          </form>
+        </div>
+      </div>
     </div>
   )
 }
