@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import api from "../config/api";
 import { toast } from "react-hot-toast";
 
@@ -9,6 +9,24 @@ const getErrMsg = (err, fallback) => err.response?.data?.error || fallback || "S
 export const AppProvider = ({ children }) => {
 
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Refresh User Profile & Storage Stats
+  const refreshUser = useCallback(async () => {
+    try {
+      const { data } = await api.get("/api/auth/me");
+      setUser(data.user);
+      return data.user;
+    } catch (error) {
+      setUser(null);
+      return null;
+    }
+  }, []);
+
+  // Check Auth Status on App Load
+  useEffect(() => {
+    refreshUser().finally(() => setIsLoading(false));
+  }, [refreshUser]);
 
   //Auth Actions Helper
   const authAction = async (requestFn, successMsg, errorFallback) => {
@@ -56,7 +74,9 @@ export const AppProvider = ({ children }) => {
     setUser,
     login,
     register,
-    logout
+    logout,
+    isLoading,
+    isAuthenticated: !!user,
   };
 
   return (
