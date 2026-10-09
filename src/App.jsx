@@ -1,8 +1,21 @@
+import { Toaster } from "react-hot-toast"
+import Login from "./pages/Login"
+import Drive from "./pages/Drive"
+import { Navigate } from "react-router-dom"
 
 
 const App = () => {
   return (
-    <div className="text-red-500">App</div>
+    <>
+      <Toaster />
+      <Routes>
+        <Route path="/login" element={<Login mode="login" />} />
+        <Route path="/register" element={<Login mode="register" />} />
+        <Route path="/" element={<Drive />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+
+      </Routes>
+    </>
   )
 }
 
