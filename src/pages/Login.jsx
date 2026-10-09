@@ -3,12 +3,14 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
+import { useApp } from "../context/AppContext";
 
 
 
 const Login = ({ mode = "login" }) => {
   const isRegister = mode === "register";
   const navigate = useNavigate();
+  const { login, register } = useApp();
 
   const [form, setForm] = useState({
     name: "",
@@ -23,6 +25,17 @@ const Login = ({ mode = "login" }) => {
   };
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    const ok = isRegister
+      ? await register(form.name, form.email, form.password)
+      : await login(form.email, form.password);
+
+    setIsLoading(false);
+
+    if (ok) {
+      navigate("/");
+    }
 
   }
 

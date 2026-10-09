@@ -14,7 +14,6 @@ const App = () => {
         <Route path="/register" element={<Login mode="register" />} />
         <Route path="/" element={<Drive />} />
         <Route path="*" element={<Navigate to="/" replace />} />
-
       </Routes>
     </>
   )
