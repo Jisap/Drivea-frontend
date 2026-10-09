@@ -1,6 +1,6 @@
 import { LockIcon, MailIcon, UserIcon } from "lucide-react";
 import { useState } from "react"
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
 
@@ -117,6 +117,24 @@ const Login = ({ mode = "login" }) => {
               </span>
             </Button>
           </form>
+
+          <div className="text-center pt-2">
+            {isRegister ? (
+              <p className="text-xs text-zinc-500">
+                Already have an account? {" "}
+                <Link to="/login" className="text-orange-600 font-semibold hover:underline">
+                  Sign in here
+                </Link>
+              </p>
+            ) : (
+              <p className="text-xs text-zinc-500">
+                Don't have an account yet?{" "}
+                <Link to="/register" className="text-orange-600 font-semibold hover:underline">
+                  Create account
+                </Link>
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>
