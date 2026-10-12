@@ -2,7 +2,8 @@ import { Toaster } from "react-hot-toast"
 import Login from "./pages/Login"
 import Drive from "./pages/Drive"
 import { Routes, Route, Navigate } from "react-router-dom"
-
+import ProtectedRoute from "./components/auth/ProtectedRoute"
+import DashboardLayout from "./components/layout/DashboardLayout"
 
 
 const App = () => {
@@ -15,7 +16,9 @@ const App = () => {
 
         {/* Private routes */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Drive />} />
+          <Route element={<DashboardLayout />}>
+            <Route path="/" element={<Drive />} />
+          </Route>
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
