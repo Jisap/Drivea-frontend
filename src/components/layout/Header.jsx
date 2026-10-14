@@ -1,6 +1,10 @@
 import React from 'react'
 import { useApp } from '../../context/AppContext'
-import { MenuIcon, SearchIcon } from 'lucide-react'
+import { ArrowUpDownIcon, MenuIcon, SearchIcon } from 'lucide-react'
+import { Dropdown, DropdownItem } from '../ui/Dropdown'
+import { SORT_OPTIONS } from '../../assets/assets'
+
+
 
 const Header = ({ onMobileMenuToggle }) => {
 
@@ -42,7 +46,33 @@ const Header = ({ onMobileMenuToggle }) => {
           )}
         </div>
       </div>
+
       {/* Right */}
+      <div className='flex items-center gap-2'>
+        <Dropdown
+          trigger={
+            <button
+              type="button"
+              className='flex items-center gap-1.5 px-3 py-2 bg-slate-100 border border-slate-200 hover:bg-slate-200 text-slate-700
+              text-xs font-semibold rounded-xl transition'
+            >
+              <ArrowUpDownIcon className='w-3.5 h-3.5' />
+              <span className='hidden sm:inline'>Sort</span>
+            </button>
+          }
+        >
+          {SORT_OPTIONS.map((opt) => (
+            <DropdownItem
+              key={opt.value}
+              onClick={() => setSortBy(opt.value)}
+            >
+              <span className={sortBy === opt.value ? "text-orange-600 font-semibold" : ""}>
+                {opt.label}
+              </span>
+            </DropdownItem>
+          ))}
+        </Dropdown>
+      </div>
     </div>
   )
 }
