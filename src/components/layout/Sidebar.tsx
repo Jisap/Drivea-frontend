@@ -1,10 +1,17 @@
 import React, { useRef } from 'react'
 import { useApp } from '../../context/AppContext'
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FolderPlusIcon, HardDriveIcon, HardDriveUploadIcon, PlusIcon, Trash2Icon, UsersIcon } from 'lucide-react';
 import { Dropdown, DropdownItem } from '../ui/Dropdown';
 
-const Sidebar = ({ onCreateFolderClick, isMobileOpen, setIsMobileOpen }) => {
+type SidebarProps = {
+  onCreateFolderClick: () => void;          // función sin argumentos ni retorno
+  isMobileOpen: boolean;                    // estado booleano
+  setIsMobileOpen: (open: boolean) => void; // setter del estado
+}
+
+
+const Sidebar = ({ onCreateFolderClick, isMobileOpen, setIsMobileOpen }: SidebarProps) => {
 
   const isUploading = false
   const { user, currentFolderId } = useApp();
@@ -15,7 +22,7 @@ const Sidebar = ({ onCreateFolderClick, isMobileOpen, setIsMobileOpen }) => {
   const storage_limit = Number(user?.storage_limit ?? 1073741824); // 1 GB
   const used_percentage = Math.min(100, Math.round((storage_used / storage_limit) * 100))
 
-  const navItem = [
+  const navItems = [
     { label: "My Drive", path: "/", icon: HardDriveIcon },
     { label: "Shared Files", path: "/shared", icon: UsersIcon },
     { label: "Trash", path: "/trash", icon: Trash2Icon },
@@ -95,8 +102,39 @@ const Sidebar = ({ onCreateFolderClick, isMobileOpen, setIsMobileOpen }) => {
         </div>
 
         {/* Navigation Links */}
-        <nav>
-          <p>Links</p>
+        <nav className='flex-1 px-3 py-2 space-y-1 overflow-y-auto'>
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            /* 
+              * Lógica de estado "Activo" para el menú:
+              * - Si es la ruta raíz ("/"): El enlace se resalta tanto en "/" como en cualquier 
+              *   ruta que empiece por "/drive" (ej. /drive/archivos).
+              * - Para cualquier otra ruta: Solo se resalta si la URL actual es exactamente igual.
+            */
+            const isActive = item.path === "/"
+              ? location.pathname === "/" || location.pathname.startsWith("/drive")
+              : location.pathname === item.path
+
+            return (
+              <Link
+                to={item.path}
+                key={item.path}
+                onClick={() => setIsMobileOpen(false)}
+                className={`
+                  flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium tansition-all
+                  ${isActive
+                    ? "border-r-3 border-orange-500 bg-linear-to-r from-orange-50 to-orange-100 text-orange-600"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                  }
+                `}
+              >
+                <Icon
+                  className={`size-4.5 ${isActive ? "text-orange-600" : "text-slate-500"}`}
+                />
+                <span>{item.label}</span>
+              </Link>
+            )
+          })}
         </nav>
 
         {/* Storage usage widget */}
