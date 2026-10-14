@@ -1,6 +1,6 @@
 import React from 'react'
 import { useApp } from '../../context/AppContext'
-import { ArrowUpDownIcon, MenuIcon, SearchIcon } from 'lucide-react'
+import { ArrowUpDownIcon, LogOutIcon, MenuIcon, SearchIcon, UserIcon } from 'lucide-react'
 import { Dropdown, DropdownItem } from '../ui/Dropdown'
 import { SORT_OPTIONS } from '../../assets/assets'
 
@@ -71,6 +71,32 @@ const Header = ({ onMobileMenuToggle }) => {
               </span>
             </DropdownItem>
           ))}
+        </Dropdown>
+
+        {/* User Avatar Menu */}
+        <Dropdown
+          trigger={
+            <button
+              type="button"
+              className='flex items-center gap-1.5 px-3 py-2 bg-slate-100 border border-slate-200 hover:bg-slate-200 text-slate-700
+              text-xs font-semibold rounded-xl transition'
+            >
+              {user?.name ? user.name.charAt(0).toUpperCase() : <UserIcon className='size-4' />}
+            </button>
+          }
+        >
+          <div className='px-4 py-3 border-b border-slate-200'>
+            <p className='text-sm font-semibold text-slate-900'>{user?.name}</p>
+            <p className='text-xs text-slate-500'>{user?.email}</p>
+          </div>
+
+          <DropdownItem
+            icon={LogOutIcon}
+            danger
+            onClick={logout}
+          >
+            Log Out
+          </DropdownItem>
         </Dropdown>
       </div>
     </div>
