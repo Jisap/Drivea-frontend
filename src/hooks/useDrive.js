@@ -179,6 +179,33 @@ const useDrive = () => {
   };
 
 
+  /**
+   * Restaura un item desde la papelera (Polimórfico)
+   */
+  const restoreItem = (item) => {
+    const endpoint = isFolder ? "folders" : "files";
+    const id = item?.id || item;
+
+    return runAction(
+      () => api.post(`/api/${endpoint}/${id}/restore`),
+      "Item restored", "Error restoring item.",
+    );
+  };
+
+  /**
+   * Elimina permanentemente un item desde la papelera (Polimórfico)
+   */
+  const permanentDeleteItem = (item) => {
+    const endpoint = isFolder ? "folders" : "files";
+    const id = item?.id || item;
+
+    return runAction(
+      () => api.delete(`/api/${endpoint}/${id}/permanent-delete`),
+      "Item deleted permanently", "Error deleting item.",
+    );
+  };
+
+
   return {
     uploadFiles,
     createFolder,
@@ -187,6 +214,8 @@ const useDrive = () => {
     deleteItem,
     isUploading,
     uploadProgress,
+    restoreItem,
+    permanentDeleteItem,
     runAction, // Útil si algún componente necesita hacer una llamada API custom con toast incluido
   };
 };
