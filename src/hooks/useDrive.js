@@ -166,8 +166,11 @@ const useDrive = () => {
    * Elimina un item (Soft delete: lo mueve a la papelera) (Polimórfico)
    */
   const deleteItem = (item) => {
+    // Comprueba si el elemento es una carpeta o un archivo
     const isFolder = isFolderItem(item);
+    // Selecciona la ruta correspondiente ('folders' o 'files') para la petición
     const endpoint = isFolder ? "folders" : "files";
+    // Obtiene el identificador tanto si se recibe el objeto completo como si solo se pasa el ID primitivo
     const id = item?.id || item;
 
     return runAction(
@@ -193,7 +196,7 @@ const useDrive = () => {
   };
 
   /**
-   * Elimina permanentemente un item desde la papelera (Polimórfico)
+   * Elimina permanentemente un item desde la papelera 
    */
   const permanentDeleteItem = (item) => {
     const endpoint = isFolder ? "folders" : "files";
