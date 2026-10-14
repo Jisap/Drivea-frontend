@@ -13,13 +13,22 @@ export const SORT_OPTIONS = [
 
 // Format bytes into human readable string (e.g. 1.25 MB)
 export function formatBytes(bytes, decimals = 2) {
+    // 1. Validación estricta: si no es un número válido o es negativo, maneja el error.
     const num = Number(bytes);
-    if (!num || num === 0) return "0 Bytes";
+    if (isNaN(num) || !isFinite(num) || num < 0) return "0 Bytes";
+    if (num === 0) return "0 Bytes";
+
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB"];
+
     const i = Math.floor(Math.log(num) / Math.log(k));
-    return parseFloat((num / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+
+    // 2. Usar Intl.NumberFormat es más moderno y maneja mejor los decimales y locales,
+    // pero tu método con parseFloat también es perfectamente válido.
+    const formattedValue = parseFloat((num / Math.pow(k, i)).toFixed(dm));
+
+    return `${formattedValue} ${sizes[i]}`; // Template literals son más limpios
 }
 
 // Icon mapping configuration

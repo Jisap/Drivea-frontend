@@ -3,6 +3,8 @@ import { useApp } from '../../context/AppContext'
 import { Link, useLocation } from 'react-router-dom';
 import { FolderPlusIcon, HardDriveIcon, HardDriveUploadIcon, PlusIcon, Trash2Icon, UsersIcon } from 'lucide-react';
 import { Dropdown, DropdownItem } from '../ui/Dropdown';
+import { ProgressBar } from '../ui/ProgressBar';
+import { formatBytes } from '../../assets/assets';
 
 type SidebarProps = {
   onCreateFolderClick: () => void;          // función sin argumentos ni retorno
@@ -138,8 +140,20 @@ const Sidebar = ({ onCreateFolderClick, isMobileOpen, setIsMobileOpen }: Sidebar
         </nav>
 
         {/* Storage usage widget */}
-        <div>
-          <p>Storage Usage</p>
+        <div className='p-4 border-t border-slate-200 bg-slate-50'>
+          <div className='flex items-center justify-between text-xs mb-2'>
+            <span className='text-slate-600 font-medium'>Storage</span>
+            <span className='text-slate-900 font-semibold'>{used_percentage}%</span>
+          </div>
+          <ProgressBar
+            progress={used_percentage}
+            color={
+              used_percentage > 90 ? "bg-red-600" : used_percentage > 75 ? "bg-amber-500" : "bg-orange-600"
+            }
+          />
+          <p className='text-[11px] text-slate-500 mt-2'>
+            {formatBytes(storage_used)} of {formatBytes(storage_limit)} used
+          </p>
         </div>
       </aside>
     </>
