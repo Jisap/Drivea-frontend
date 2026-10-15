@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { Spinner } from '../ui/Spinner';
 import { EmptyState } from '../ui/EmptyState';
 import FolderCard from '../Folders/FolderCard';
+import FileCard from './FileCard';
 
 const FileGrid = ({
   onFolderClick,
@@ -59,6 +60,27 @@ const FileGrid = ({
       )}
 
       {/* Files Section */}
+      {hasFiles && (
+        <div>
+          <h3 className='text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3'>
+            Files
+          </h3>
+
+          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+            {files.map((file) => (
+              <FileCard
+                key={file.id}
+                file={file}
+                onPreview={onPreviewFile}
+                onShare={(item) => onShareItem({ ...item, item_type: 'file' })}
+                onRename={(item) => onRenameItem({ ...item, item_type: 'file' })}
+                onMove={(item) => onMoveItem({ ...item, item_type: 'file' })}
+                onDelete={(item) => onDeleteItem({ ...item, item_type: 'file' })}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

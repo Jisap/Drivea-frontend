@@ -11,7 +11,7 @@ const Drive = () => {
 
   const navigate = useNavigate();
   const { folderId } = useParams();
-  const { fetchDriveContent, setCurrentFolderId } = useApp();
+  const { fetchDriveContent, setCurrentFolderId, searchQuery, sortBy } = useApp();
   const { deleteItem: removeDriveItem } = useDrive();
 
   // Active item modals
@@ -21,11 +21,13 @@ const Drive = () => {
   const [moveItem, setMoveItem] = useState(null);
   const [deleteItem, setDeleteItem] = useState(null);
 
+  // Sincroniza la carpeta activa en el contexto global y consulta los datos
+  // cada vez que cambia la URL (/drive/:folderId), el filtro de búsqueda o el orden.
   useEffect(() => {
     const id = folderId || null;
-    setCurrentFolderId(id)
-    fetchDriveContent(id)
-  }, [folderId, fetchDriveContent, setCurrentFolderId])
+    setCurrentFolderId(id);
+    fetchDriveContent(id, searchQuery, sortBy);
+  }, [folderId, searchQuery, sortBy, fetchDriveContent, setCurrentFolderId]);
 
   return (
     <div className="space-y-4">

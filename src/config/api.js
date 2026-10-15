@@ -205,18 +205,18 @@ api.defaults.adapter = async (config) => {
         const folders = getFolders();
         const folder = folders.find((f) => f.id === id);
         if (folder) {
-            // Calculate breadcrumbs trail
-            const breadcrumbs = [];
+            // Cálculo de la ruta de navegación (Breadcrumbs):
+            // 1. Inicia siempre con el nodo raíz ("My Drive", id: null).
+            // 2. Itera hacia arriba desde la carpeta actual a través de sus 'parent_id'.
+            // 3. 'unshift' asegura el orden jerárquico correcto: [My Drive, CarpetaPadre, ..., CarpetaActual].
+            const breadcrumbs = [{ id: null, name: "My Drive" }];
+            const trail = [];
             let curr = folder;
-            while (curr && curr.parent_id) {
-                const parent = folders.find((f) => f.id === curr.parent_id);
-                if (parent) {
-                    breadcrumbs.unshift({ id: parent.id, name: parent.name });
-                    curr = parent;
-                } else {
-                    break;
-                }
+            while (curr) {
+                trail.unshift({ id: curr.id, name: curr.name });
+                curr = curr.parent_id ? folders.find((f) => f.id === curr.parent_id) : null;
             }
+            breadcrumbs.push(...trail);
             responseData = { folder, breadcrumbs };
         } else {
             status = 404;
