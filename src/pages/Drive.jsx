@@ -1,9 +1,15 @@
 
 
 const Drive = () => {
-    return (
-        <div>Drive</div>
-    )
+  return (
+    <div className="space-y-4">
+      {/* Breadcrumbs */}
+
+
+      {/* folder & files */}
+
+    </div>
+  )
 }
 
 export default Drive
