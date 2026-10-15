@@ -5,24 +5,28 @@ import { FolderPlusIcon, HardDriveIcon, HardDriveUploadIcon, PlusIcon, Trash2Ico
 import { Dropdown, DropdownItem } from '../ui/Dropdown';
 import { ProgressBar } from '../ui/ProgressBar';
 import { formatBytes } from '../../assets/assets';
-
-type SidebarProps = {
-  onCreateFolderClick: () => void;          // función sin argumentos ni retorno
-  isMobileOpen: boolean;                    // estado booleano
-  setIsMobileOpen: (open: boolean) => void; // setter del estado
-}
+import useDrive from '../../hooks/useDrive';
 
 
-const Sidebar = ({ onCreateFolderClick, isMobileOpen, setIsMobileOpen }: SidebarProps) => {
 
-  const isUploading = false
+
+const Sidebar = ({ onCreateFolderClick, isMobileOpen, setIsMobileOpen }) => {
+
+  const { isUploading, uploadFiles } = useDrive()
   const { user, currentFolderId } = useApp();
   const location = useLocation();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef < HTMLInputElement > (null);
 
   const storage_used = Number(user?.storage_used ?? 0);
   const storage_limit = Number(user?.storage_limit ?? 1073741824); // 1 GB
   const used_percentage = Math.min(100, Math.round((storage_used / storage_limit) * 100))
+
+  const handleFileSelect = (e) => {
+    if (e.target.files && e.target.files.length > 0) { // Validacion: si hay archivos seleccionado
+      uploadFiles(e.target.files, currentFolderId);  // Llama a la funcion uploadFiles del hook useDrive
+      e.target.value = "";                           // Limpia el input de archivos
+    }
+  }
 
   const navItems = [
     { label: "My Drive", path: "/", icon: HardDriveIcon },
@@ -71,6 +75,7 @@ const Sidebar = ({ onCreateFolderClick, isMobileOpen, setIsMobileOpen }: Sidebar
             type="file"
             ref={fileInputRef}
             multiple
+            onChange={handleFileSelect}
             className='hidden'
           />
 

@@ -147,9 +147,13 @@ const useDrive = () => {
     * Nota: Maneja la diferencia de payload entre archivos (target_folder) y carpetas (target_parent)
     */
   const moveItem = (item, targetFolderId) => {
+    // Normalización: determina si el item es una carpeta o un archivo
     const isFolder = isFolderItem(item);
+    // Selecciona la ruta correspondiente ('folders' o 'files') para la petición
     const endpoint = isFolder ? "folders" : "files";
+    // Selecciona el payload adecuado según el tipo de item
     const payload = isFolder ? { target_parent: targetFolderId } : { target_folder: targetFolderId };
+    // Obtiene el ID del item
     const id = item?.id || item;
 
     return runAction(
