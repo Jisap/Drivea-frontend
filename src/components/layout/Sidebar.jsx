@@ -14,8 +14,7 @@ const Sidebar = ({ onCreateFolderClick, isMobileOpen, setIsMobileOpen }) => {
 
   const { isUploading, uploadFiles } = useDrive()
   const { user, currentFolderId } = useApp();
-  const location = useLocation();
-  const fileInputRef = useRef < HTMLInputElement > (null);
+  const fileInputRef = useRef(null);
 
   const storage_used = Number(user?.storage_used ?? 0);
   const storage_limit = Number(user?.storage_limit ?? 1073741824); // 1 GB
