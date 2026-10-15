@@ -95,7 +95,7 @@ export const AppProvider = ({ children }) => {
         const [folderRes, fileRes, detailRes] = await Promise.all([                    // Realiza múltiples peticiones en paralelo
           api.get("/api/folders", { params: { parent_id: parentParam } }),               // 1: Obtiene las subcarpetas dentro de parentParam
           api.get("/api/files", { params: { folder_id: parentParam, search, sort } }),   // 2: Obtiene los archivos dentro de parentParam
-          folderId ? api.get(`/api/folders/${folderId}`) : null,                         // 3: Obtiene los detalles de parentParam (solo si no es la raíz)
+          folderId ? api.get(`/api/folders/${folderId}`) : null,                         // 3: Obtiene los detalles de parentParam (solo si no es la raíz) -> detailRes
         ]);
 
         setFolders(folderRes.data.folders);                                            // 3: Establece las subcarpetas
