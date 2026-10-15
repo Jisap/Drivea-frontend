@@ -11,11 +11,12 @@ const FolderCard = ({
 }) => {
   return (
     <div
-      onClick={() => onClick(folder)}
       className='group relative bg-white border border-slate-200 hover:border-orange-200
     rounded-2xl p-4 transition-all duration-200 cursor-pointer flex items-center justify-between'
     >
-      <div className='flex items-center gap-3 min-w-0 pr-2'>
+      <button
+        onClick={() => onClick(folder)}
+        className='flex items-center gap-3 min-w-0 pr-2'>
         <div>
           <LucideFolder className='size-6 fill-orange-500/20' />
         </div>
@@ -27,7 +28,7 @@ const FolderCard = ({
         >
           {folder.name}
         </h4>
-      </div>
+      </button>
 
       <ItemDropdown
         item={folder}
