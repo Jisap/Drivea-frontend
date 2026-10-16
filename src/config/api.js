@@ -39,6 +39,21 @@ const getSamplePreviewUrl = (file) => {
             }
         }, null, 2));
     }
+    // Genera datos tabulares simulados para archivos de hoja de cálculo (.xlsx, .xls, .csv)
+    if (mime.includes("spreadsheet") || mime.includes("excel") || file?.name?.endsWith(".xlsx") || file?.name?.endsWith(".csv")) {
+        return "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
+            sheetName: "Resumen Financiero",
+            columns: ["ID", "Mes", "Ingresos ($)", "Gastos ($)", "Margen Neto", "Estado"],
+            rows: [
+                ["001", "Enero", "125,400", "78,200", "37.6%", "Aprobado"],
+                ["002", "Febrero", "142,850", "81,100", "43.2%", "Aprobado"],
+                ["003", "Marzo", "168,900", "94,300", "44.1%", "Aprobado"],
+                ["004", "Abril", "155,200", "89,600", "42.2%", "Aprobado"],
+                ["005", "Mayo", "182,750", "98,400", "46.1%", "Pendiente"],
+                ["006", "Junio", "195,100", "102,500", "47.4%", "En revisión"]
+            ]
+        }));
+    }
     return "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
 };
 

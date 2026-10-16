@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom"
 import api from "../../config/api";
-import { DownloadIcon, FileTextIcon, Loader2Icon, XIcon } from "lucide-react";
+import { DownloadIcon, FileSpreadsheetIcon, FileTextIcon, Loader2Icon, TableIcon, XIcon } from "lucide-react";
 import { formatBytes } from "../../assets/assets";
 
 
@@ -9,6 +9,7 @@ const FilePreview = ({ file, onClose }) => {
 
   const [previewUrl, setPreviewUrl] = useState(null);
   const [textContent, setTextContent] = useState(null);
+  const [excelData, setExcelData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -19,6 +20,7 @@ const FilePreview = ({ file, onClose }) => {
     setIsLoading(true);
     setError(null);
     setTextContent(null);
+    setExcelData(null);
 
     api.get(`/api/files/${file.id}/preview`)                   // Obtiene el preview de la imagen cada vez que cambia el archivo
       .then(async res => {
@@ -29,9 +31,20 @@ const FilePreview = ({ file, onClose }) => {
         // Detección de formatos de archivo basados en texto o código
         const isJson = file.mime_type?.includes("json") || file.name?.endsWith(".json");
         const isText = file.mime_type?.startsWith("text/") || file.name?.endsWith(".txt") || file.name?.endsWith(".md");
+        const isSpreadsheet = file.mime_type?.includes("spreadsheet") || file.mime_type?.includes("excel") || file.name?.endsWith(".xlsx") || file.name?.endsWith(".csv");
 
+        // Si es una hoja de cálculo, cargamos los datos tabulares
+        if (isSpreadsheet && url) {
+          try {
+            const rawRes = await fetch(url);
+            const data = await rawRes.json();
+            if (isMounted) setExcelData(data);
+          } catch {
+            if (isMounted) setExcelData(null);
+          }
+        }
         // Si es un archivo de texto o JSON, se descarga su contenido para renderizarlo directamente en el visor de código
-        if ((isJson || isText) && url) {
+        else if ((isJson || isText) && url) {
           try {
             const rawRes = await fetch(url);
             const text = await rawRes.text();
@@ -69,6 +82,7 @@ const FilePreview = ({ file, onClose }) => {
 
   const mime = file.mime_type || "";
   const isJsonOrText = mime.includes("json") || mime.startsWith("text/") || file.name?.endsWith(".json") || file.name?.endsWith(".txt") || file.name?.endsWith(".md");
+  const isSpreadsheet = mime.includes("spreadsheet") || mime.includes("excel") || file.name?.endsWith(".xlsx") || file.name?.endsWith(".csv");
 
   return (
     <div
@@ -82,7 +96,11 @@ const FilePreview = ({ file, onClose }) => {
         {/* Top bar */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
           <div className="flex items-center gap-3 min-w-0">
-            <FileTextIcon className="size-5 text-orange-600 shrink-0" />
+            {isSpreadsheet ? (
+              <FileSpreadsheetIcon className="size-5 text-emerald-600 shrink-0" />
+            ) : (
+              <FileTextIcon className="size-5 text-orange-600 shrink-0" />
+            )}
 
             <div className="min-w-0">
               <h3 className="text-base font-medium text-slate-900 truncate">{file.name}</h3>
@@ -150,6 +168,52 @@ const FilePreview = ({ file, onClose }) => {
               title={file.name}
               className="w-full h-[70vh] rounded-xl border border-slate-200"
             />
+          ) : isSpreadsheet ? (
+            // Visor de hoja de cálculo / Excel interactivo
+            <div className="w-full h-full max-h-[70vh] flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+              {/* Barra de pestañas estilo Excel */}
+              <div className="flex items-center justify-between px-4 py-2.5 bg-slate-100 border-b border-slate-200 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white text-emerald-700 font-semibold rounded-md border border-slate-200 shadow-xs">
+                    <TableIcon className="size-3.5 text-emerald-600" />
+                    {excelData?.sheetName || "Sheet 1"}
+                  </span>
+                </div>
+                <span className="text-[11px] font-medium text-slate-500">
+                  {excelData?.rows?.length || 0} filas cargadas
+                </span>
+              </div>
+
+              {/* Tabla de celdas */}
+              <div className="flex-1 overflow-auto">
+                <table className="w-full border-collapse text-left text-xs font-mono">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-600">
+                      <th className="w-12 px-3 py-2 text-center bg-slate-100 border-r border-slate-200 font-medium text-slate-400">#</th>
+                      {excelData?.columns?.map((col, idx) => (
+                        <th key={idx} className="px-4 py-2 border-r border-slate-200 font-semibold text-slate-700 whitespace-nowrap">
+                          {col}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {excelData?.rows?.map((row, rowIdx) => (
+                      <tr key={rowIdx} className="border-b border-slate-100 hover:bg-emerald-50/40 transition">
+                        <td className="px-3 py-2 text-center bg-slate-50/70 border-r border-slate-200 text-[11px] text-slate-400 font-medium select-none">
+                          {rowIdx + 1}
+                        </td>
+                        {row.map((cell, cellIdx) => (
+                          <td key={cellIdx} className="px-4 py-2 border-r border-slate-100 text-slate-700 whitespace-nowrap">
+                            {cell}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           ) : isJsonOrText ? (
             // Visor de código/texto para archivos JSON, Markdown o texto plano
             <div className="w-full h-full max-h-[70vh] flex flex-col bg-slate-900 rounded-xl overflow-hidden border border-slate-700 shadow-inner">
