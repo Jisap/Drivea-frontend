@@ -4,6 +4,7 @@ import Breadcrumbs from "../components/layout/Breadcrumbs"
 import { useApp } from "../context/AppContext";
 import useDrive from "../hooks/useDrive";
 import { useEffect, useState } from "react";
+import FilePreview from "../components/files/FilePreview";
 
 
 
@@ -43,6 +44,9 @@ const Drive = () => {
         onMoveItem={setMoveItem}
         onDeleteItem={setDeleteItem}
       />
+
+      {/* Modals */}
+      {previewFile && <FilePreview file={previewFile} onClose={() => setPreviewFile(null)} />}
     </div>
   )
 }

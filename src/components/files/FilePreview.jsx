@@ -7,7 +7,7 @@ import { formatBytes } from "../../assets/assets";
 
 const FilePreview = ({ file, onClose }) => {
 
-  const [previewUrl, setPreviewUrl] = useSearchParams(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -19,8 +19,9 @@ const FilePreview = ({ file, onClose }) => {
     setError(null);
 
     api.get(`/api/files/${file.id}/preview`)                   // Obtiene el preview de la imagen cada vez que cambia el archivo
-      .then(data => {
-        if (isMounted) setPreviewUrl(data);                    // Guarda el preview de la imagen en el estado
+      .then(res => {
+        const url = res.data?.preview_url || res.data?.url || res.data;
+        if (isMounted) setPreviewUrl(url);                    // Guarda el preview de la imagen en el estado
       })
       .catch(() => {
         if (isMounted) setError('Failed to load preview');     // Si hay error, muestra un mensaje
@@ -49,10 +50,10 @@ const FilePreview = ({ file, onClose }) => {
         className="w-full max-w-4xl bg-white border border-slate-200 rounded-2xl flex flex-col max-h-[92vh] overflow-hidden animate-slide-up">
         {/* Top bar */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-          <div>
+          <div className="flex items-center gap-3 min-w-0">
             <FileTextIcon className="size-5 text-orange-600 shrink-0" />
 
-            <div>
+            <div className="min-w-0">
               <h3 className="text-base font-medium text-slate-900 truncate">{file.name}</h3>
               <p className="text-xs text-slate-500">{formatBytes(file.size)}</p>
             </div>
@@ -67,7 +68,7 @@ const FilePreview = ({ file, onClose }) => {
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-medium rounded-md transition">
                 <DownloadIcon className="w-3.5 h-3.5" />
-                <span>Donwload</span>
+                <span>Download</span>
               </a>
             )}
 
@@ -106,7 +107,7 @@ const FilePreview = ({ file, onClose }) => {
           ) : mime.startsWith("audio/") ? (
             <div className="p-8 bg-white border border-slate-200 rounded-2xl flex flex-col items-center gap-4">
               <p className="text-sm text-slate-800 font-semibold">{file.name}</p>
-              <udio
+              <audio
                 src={previewUrl}
                 controls
                 className="w-72 md:w-96"
