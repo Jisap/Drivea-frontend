@@ -112,8 +112,17 @@ const FilePreview = ({ file, onClose }) => {
                 className="w-72 md:w-96"
               />
             </div>
+          ) : mime === "application/pdf" ? (
+            <iframe
+              src={previewUrl}
+              title={file.name}
+              className="w-full h-[70vh] rounded-xl border border-slate-200"
+            />
           ) : (
-            <div></div>
+            <div className="text-center p-10 bg-white border border-slate-200 rounded-2xl max-w-sm">
+              <FileTextIcon className="size-12 text-slate-400 mx-auto mb-3" />
+              <p className="text-sm text-slate-700 mb-1">No direct preview available</p>
+            </div>
           )}
         </div>
       </div>
