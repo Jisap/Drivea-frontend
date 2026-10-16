@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom"
 import api from "../../config/api";
-import { DownloadIcon, FileTextIcon, XIcon } from "lucide-react";
+import { DownloadIcon, FileTextIcon, Loader2Icon, XIcon } from "lucide-react";
 import { formatBytes } from "../../assets/assets";
 
 
@@ -80,8 +80,42 @@ const FilePreview = ({ file, onClose }) => {
           </div>
         </div>
 
-
         {/* preview content */}
+        <div className="flex-1 p-6 overflow-auto flex items-center justify-center bg-slate-50 min-h-80">
+          {isLoading ? (
+            <div className="flex flex-col items-center gap-3 text-slate-500">
+              <Loader2Icon className="size-8 animate-spin text-orange-600" />
+              <p className="text-sm font-medium">Loading preview...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center text-red-600 p-4">
+              <p>{error}</p>
+            </div>
+          ) : mime.startsWith("image/") ? (
+            <img
+              src={previewUrl}
+              alt={file.name}
+              className="max-h-[70vh] max-w-full object-contain rounded-xl border border-slate-200"
+            />
+          ) : mime.startsWith("video/") ? (
+            <video
+              src={previewUrl}
+              controls
+              className="max-h-[70vh] max-w-full rounded-xl border border-slate-200"
+            />
+          ) : mime.startsWith("audio/") ? (
+            <div className="p-8 bg-white border border-slate-200 rounded-2xl flex flex-col items-center gap-4">
+              <p className="text-sm text-slate-800 font-semibold">{file.name}</p>
+              <udio
+                src={previewUrl}
+                controls
+                className="w-72 md:w-96"
+              />
+            </div>
+          ) : (
+            <div></div>
+          )}
+        </div>
       </div>
     </div>
   )
