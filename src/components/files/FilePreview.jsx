@@ -8,6 +8,7 @@ import { formatBytes } from "../../assets/assets";
 const FilePreview = ({ file, onClose }) => {
 
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [textContent, setTextContent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -17,11 +18,40 @@ const FilePreview = ({ file, onClose }) => {
     let isMounted = true;
     setIsLoading(true);
     setError(null);
+    setTextContent(null);
 
     api.get(`/api/files/${file.id}/preview`)                   // Obtiene el preview de la imagen cada vez que cambia el archivo
-      .then(res => {
+      .then(async res => {
         const url = res.data?.preview_url || res.data?.url || res.data;
-        if (isMounted) setPreviewUrl(url);                    // Guarda el preview de la imagen en el estado
+        if (!isMounted) return;
+        setPreviewUrl(url);                    // Guarda el preview de la imagen en el estado
+
+        // Detección de formatos de archivo basados en texto o código
+        const isJson = file.mime_type?.includes("json") || file.name?.endsWith(".json");
+        const isText = file.mime_type?.startsWith("text/") || file.name?.endsWith(".txt") || file.name?.endsWith(".md");
+
+        // Si es un archivo de texto o JSON, se descarga su contenido para renderizarlo directamente en el visor de código
+        if ((isJson || isText) && url) {
+          try {
+            const rawRes = await fetch(url);
+            const text = await rawRes.text();
+            if (isMounted) {
+              if (isJson) {
+                try {
+                  // Si es JSON válido, se formatea con indentación de 2 espacios para lectura amigable
+                  setTextContent(JSON.stringify(JSON.parse(text), null, 2));
+                } catch {
+                  // Si no es un JSON válido, se muestra el texto en crudo
+                  setTextContent(text);
+                }
+              } else {
+                setTextContent(text);
+              }
+            }
+          } catch {
+            if (isMounted) setTextContent(null);
+          }
+        }
       })
       .catch(() => {
         if (isMounted) setError('Failed to load preview');     // Si hay error, muestra un mensaje
@@ -38,6 +68,7 @@ const FilePreview = ({ file, onClose }) => {
   if (!file) return null;
 
   const mime = file.mime_type || "";
+  const isJsonOrText = mime.includes("json") || mime.startsWith("text/") || file.name?.endsWith(".json") || file.name?.endsWith(".txt") || file.name?.endsWith(".md");
 
   return (
     <div
@@ -119,6 +150,17 @@ const FilePreview = ({ file, onClose }) => {
               title={file.name}
               className="w-full h-[70vh] rounded-xl border border-slate-200"
             />
+          ) : isJsonOrText ? (
+            // Visor de código/texto para archivos JSON, Markdown o texto plano
+            <div className="w-full h-full max-h-[70vh] flex flex-col bg-slate-900 rounded-xl overflow-hidden border border-slate-700 shadow-inner">
+              <div className="flex items-center justify-between px-4 py-2 bg-slate-800/80 border-b border-slate-700 text-xs text-slate-300 font-mono">
+                <span>{file.name}</span>
+                <span className="text-slate-400 uppercase text-[10px]">{mime.includes("json") || file.name?.endsWith(".json") ? "JSON" : "TEXT"}</span>
+              </div>
+              <pre className="flex-1 p-4 overflow-auto font-mono text-xs text-emerald-400 whitespace-pre leading-relaxed select-text">
+                <code>{textContent || "Loading content..."}</code>
+              </pre>
+            </div>
           ) : (
             <div className="text-center p-10 bg-white border border-slate-200 rounded-2xl max-w-sm">
               <FileTextIcon className="size-12 text-slate-400 mx-auto mb-3" />

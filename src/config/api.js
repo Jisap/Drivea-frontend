@@ -21,6 +21,24 @@ const getSamplePreviewUrl = (file) => {
     if (mime.startsWith("audio/")) {
         return "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
     }
+    // Genera un Data URL con formato JSON simulado para previsualizar archivos de tipo código/json
+    if (mime.includes("json") || file?.name?.endsWith(".json")) {
+        return "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
+            app: "Drivea",
+            version: "1.0.0",
+            status: "success",
+            file: {
+                id: file?.id,
+                name: file?.name,
+                size: file?.size
+            },
+            configuration: {
+                theme: "dark",
+                storageEngine: "s3-mock",
+                features: ["preview", "sharing", "trash", "breadcrumbs"]
+            }
+        }, null, 2));
+    }
     return "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
 };
 
