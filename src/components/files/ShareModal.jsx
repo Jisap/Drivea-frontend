@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Modal } from '../ui/Modal';
 import { CheckIcon, CopyIcon, Loader2Icon, XIcon } from 'lucide-react';
 import { Button } from '../ui/Button';
@@ -32,8 +32,16 @@ const ShareModal = ({ item, isOpen, onClose }) => {
     } finally {
       setIsLoading(false);
     }
+  }, [item]);
 
-  }, { item });
+  useEffect(() => {
+    if (isOpen && item) {
+      setCopied(false);
+      setGeneratedLink("");
+      setShareLinkId(null);
+      getOrCreateShareLink();
+    }
+  }, [isOpen, item, getOrCreateShareLink]);
 
   const copyToClipboard = () => {
 
