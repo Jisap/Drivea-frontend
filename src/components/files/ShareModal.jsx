@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react'
 import { Modal } from '../ui/Modal';
 import { CheckIcon, CopyIcon, Loader2Icon, XIcon } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { api } from '../../config/api';
 
 const ShareModal = ({ item, isOpen, onClose }) => {
 
@@ -10,9 +11,29 @@ const ShareModal = ({ item, isOpen, onClose }) => {
   const [shareLinkId, setShareLinkId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const getOrCreateShareLink = useCallback(async (params) => {
+  const getOrCreateShareLink = useCallback(async () => {
+    if (!item) return;
+    setIsLoading(true);
+    try {
+      const { data } = await api.post("/api/shared", {
+        resource_type: item.item_type === "folder" ? "folder" : "file",
+        resource_id: item?.id,
+        permission: "download",
+      })
 
-  });
+      const link = data.share_link;
+      if (kink?.token) {
+        const fullUrl = `${window.location.origin}/s/${link.token}`;
+        setGeneratedLink(fullUrl);
+        setShareLinkId(link.id);
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to generate share link")
+    } finally {
+      setIsLoading(false);
+    }
+
+  }, { item });
 
   const copyToClipboard = () => {
 
