@@ -3,6 +3,7 @@ import { Modal } from '../ui/Modal';
 import { CheckIcon, CopyIcon, Loader2Icon, XIcon } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { api } from '../../config/api';
+import toast from 'react-hot-toast';
 
 const ShareModal = ({ item, isOpen, onClose }) => {
 
@@ -15,15 +16,15 @@ const ShareModal = ({ item, isOpen, onClose }) => {
     if (!item) return;
     setIsLoading(true);
     try {
-      const { data } = await api.post("/api/shared", {
-        resource_type: item.item_type === "folder" ? "folder" : "file",
-        resource_id: item?.id,
-        permission: "download",
+      const { data } = await api.post("/api/shares", {                   // Petición al backend para generar el enlace compartido.
+        resource_type: item.item_type === "folder" ? "folder" : "file",  // Tipo de recurso a compartir
+        resource_id: item?.id,                                           // ID del recurso a compartir
+        permission: "download",                                          // Permiso de descarga
       })
 
-      const link = data.share_link;
-      if (kink?.token) {
-        const fullUrl = `${window.location.origin}/s/${link.token}`;
+      const link = data.share_link;                                      // Extrae el objeto link desde data.share_link  
+      if (link?.token) {
+        const fullUrl = `${window.location.origin}/s/${link.token}`;     // Construye la URL completa anteponiendo el origen del navegador:
         setGeneratedLink(fullUrl);
         setShareLinkId(link.id);
       }
@@ -34,6 +35,7 @@ const ShareModal = ({ item, isOpen, onClose }) => {
     }
   }, [item]);
 
+  // Hook para limpiar el estado y llamar a getOrCreateShareLink cuando el modal se abre:
   useEffect(() => {
     if (isOpen && item) {
       setCopied(false);
@@ -44,11 +46,24 @@ const ShareModal = ({ item, isOpen, onClose }) => {
   }, [isOpen, item, getOrCreateShareLink]);
 
   const copyToClipboard = () => {
-
+    if (!generatedLink) return;
+    navigator.clipboard.writeText(generatedLink)
+    setCopied(true)
+    toast.success("Link copied to clipboard!")
+    setTimeout(() => setCopied(false), 2000)
   }
 
   const handleDeleteShareLink = async () => {
-
+    if (!shareLinkId) return;
+    try {
+      await api.delete(`/api/shareds/${shareLinkId}`)
+      toast.success("Share link deleted.")
+      setGeneratedLink("");
+      setShareLinkId(null);
+      onClose();
+    } catch (err) {
+      toast.error(err.response?.data?.err || "Failed to delete share link")
+    }
   }
 
   return (
