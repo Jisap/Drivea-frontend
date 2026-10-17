@@ -47,6 +47,7 @@ const Drive = () => {
 
       {/* Modals */}
       {previewFile && <FilePreview file={previewFile} onClose={() => setPreviewFile(null)} />}
+      {shareItem && <ShareModal item={shareItem} isOpen={!!shareItem} onClose={() => setShareItem(null)} />}
     </div>
   )
 }
