@@ -5,6 +5,7 @@ import { useApp } from "../context/AppContext";
 import useDrive from "../hooks/useDrive";
 import { useEffect, useState } from "react";
 import FilePreview from "../components/files/FilePreview";
+import ShareModal from "../components/files/ShareModal";
 
 
 

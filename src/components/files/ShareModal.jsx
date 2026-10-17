@@ -2,8 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Modal } from '../ui/Modal';
 import { CheckIcon, CopyIcon, Loader2Icon, XIcon } from 'lucide-react';
 import { Button } from '../ui/Button';
-import { api } from '../../config/api';
+import api from '../../config/api';
 import toast from 'react-hot-toast';
+import { Input } from '../ui/Input';
 
 const ShareModal = ({ item, isOpen, onClose }) => {
 
@@ -56,7 +57,7 @@ const ShareModal = ({ item, isOpen, onClose }) => {
   const handleDeleteShareLink = async () => {
     if (!shareLinkId) return;
     try {
-      await api.delete(`/api/shareds/${shareLinkId}`)
+      await api.delete(`/api/shares/${shareLinkId}`)
       toast.success("Share link deleted.")
       setGeneratedLink("");
       setShareLinkId(null);
