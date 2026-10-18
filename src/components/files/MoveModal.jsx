@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import useDrive from "../../hooks/useDrive"
 import { Modal } from "../ui/Modal";
 import { HardDriveIcon } from "lucide-react";
 import { Button } from "../ui/Button";
+import api from "../../config/api";
 
 
 const MoveModal = () => {
@@ -11,6 +12,28 @@ const MoveModal = () => {
   const [selectedFolderId, setSelectedFolderId] = useState(null);
   const [isMoving, setIsMoving] = useState(false);
   const { moveItem } = useDrive();
+
+  // Crea un nuevo array filtered a partir de data.folders, quedándose solo con los elementos
+  // para los que la función devuelve true. Se excluye la carpeta que coincide con item, pero solo cuando item es una carpeta.
+  useEffect(() => {
+    if (!isOpen) return;
+    // Fetch all top-level folders user owns
+    api.get("/api/folders").then(({ data }) => {
+      // item?.item_type !== "folder": Si item no existe o no es una carpeta, esto es true y f se mantiene. No hace falta excluir nada.
+      // f.id !== item.id: Solo se evalúa si item sí es una carpeta. Es true para todas las carpetas salvo la que tiene el mismo id que item,
+      // así que esa queda fuera.
+      const filtered = data.folders.filter((f) => item?.item_type !== "folder" || f.id !== item.id)
+      setAvailableFolders(filtered)
+    })
+  }, [item, isOpen])
+
+  const handleMove = async () => {
+    if (!item) return;
+    setIsMoving(true);
+    await moveItem(item, selectedFolderId)
+    setIsMoving(false);
+    onClose()
+  }
 
   return (
     <Modal
