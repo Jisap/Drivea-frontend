@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 import useDrive from "../../hooks/useDrive"
 import { Modal } from "../ui/Modal";
-import { HardDriveIcon } from "lucide-react";
+import { HardDriveIcon, Folder } from "lucide-react";
 import { Button } from "../ui/Button";
 import api from "../../config/api";
 
 
-const MoveModal = () => {
+const MoveModal = ({ item, isOpen, onClose }) => {
 
   const [availableFolders, setAvailableFolders] = useState([]);
   const [selectedFolderId, setSelectedFolderId] = useState(null);
@@ -30,9 +30,11 @@ const MoveModal = () => {
   const handleMove = async () => {
     if (!item) return;
     setIsMoving(true);
-    await moveItem(item, selectedFolderId)
+    const success = await moveItem(item, selectedFolderId)
     setIsMoving(false);
-    onClose()
+    if (success) {
+      onClose();
+    }
   }
 
   return (
@@ -62,7 +64,7 @@ const MoveModal = () => {
 
           {/* Subfolders List */}
           {availableFolders.map((folder) => (
-            <button className={`
+            <button key={folder.id} className={`
             w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition 
             ${selectedFolderId === folder.id
                 ? "bg-orange-50 text-orange-700 border border-orange-200 font-semibold"
@@ -71,7 +73,7 @@ const MoveModal = () => {
               onClick={() => setSelectedFolderId(folder.id)}
               type="button"
             >
-              <LucideForlder className="size-4 text-orange-600 fill-orange-500/20" />
+              <Folder className="size-4 text-orange-600 fill-orange-500/20" />
               <span className="truncate">{folder.name}</span>
             </button>
           ))}

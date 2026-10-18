@@ -17,6 +17,8 @@ const useDrive = () => {
     fetchDriveContent,     // Función para recargar los archivos de la carpeta actual
     refreshUser,           // Función para actualizar los datos del usuario (ej. espacio en disco usado)
     currentFolderId,       // ID de la carpeta en la que el usuario está navegando actualmente
+    searchQuery,           // Filtro de búsqueda actual
+    sortBy,                // Criterio de ordenación actual
     isUploading,           // Booleano para mostrar spinners o deshabilitar botones
     setIsUploading,        // Setter del estado de carga
     uploadProgress,        // Número (0-100) para la barra de progreso
@@ -140,7 +142,7 @@ const useDrive = () => {
       () => api.patch(`/api/${endpoint}/${id}/rename`, { name: newName }),
       `${isFolder ? "Folder" : "File"} renamed`,
       "Error renaming item.",
-      () => fetchDriveContent(currentFolderId)
+      () => fetchDriveContent(currentFolderId, searchQuery, sortBy)
     );
   };
 
@@ -163,7 +165,7 @@ const useDrive = () => {
       () => api.patch(`/api/${endpoint}/${id}/move`, payload),
       `${isFolder ? "Folder" : "File"} moved`,
       "Error moving item.",
-      () => fetchDriveContent()
+      () => fetchDriveContent(currentFolderId, searchQuery, sortBy)
     );
   };
 
@@ -184,7 +186,7 @@ const useDrive = () => {
       () => api.delete(`/api/${endpoint}/${id}/delete`),
       `${isFolder ? "Folder" : "File"} moved to Trash`,
       "Error deleting item.",
-      () => fetchDriveContent()
+      () => fetchDriveContent(currentFolderId, searchQuery, sortBy)
     );
   };
 

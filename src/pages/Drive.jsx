@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import FilePreview from "../components/files/FilePreview";
 import ShareModal from "../components/files/ShareModal";
 import RenameModal from "../components/files/RenameModal";
+import MoveModal from "../components/files/MoveModal";
 
 
 
@@ -51,6 +52,7 @@ const Drive = () => {
       {previewFile && <FilePreview file={previewFile} onClose={() => setPreviewFile(null)} />}
       {shareItem && <ShareModal item={shareItem} isOpen={!!shareItem} onClose={() => setShareItem(null)} />}
       {renameItem && <RenameModal item={renameItem} isOpen={!!renameItem} onClose={() => setRenameItem(null)} />}
+      {moveItem && <MoveModal item={moveItem} isOpen={!!moveItem} onClose={() => setMoveItem(null)} />}
     </div>
   )
 }
