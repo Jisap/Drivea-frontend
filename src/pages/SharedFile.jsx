@@ -6,6 +6,7 @@ import { getFileIcon } from "../assets/assets";
 import api from "../config/api";
 import toast from "react-hot-toast";
 import { formatDate } from "date-fns";
+import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 
 
 const SharedFile = () => {
@@ -31,6 +32,33 @@ const SharedFile = () => {
   useEffect(() => {
     fetchShares();
   }, [])
+
+  const copyShareLink = async (token) => {
+    const fullUrl = `${window.location.origin}/s/${token}` // Obtiene la url completa de donde se encuentra el recurso compartido
+    await navigator.clipboard.writeText(fullUrl)           // Copia la url completa
+  }
+
+  const handleCopy = (token) => {
+    copyShareLink(token)
+    setCopiedToken(token)
+    setTimeout(() => setCopiedToken(null), 2000)
+  }
+
+  const handleDeleteShare = async (params) => {
+    if (!deletingShare) return;
+
+    setIsDeleting(true)
+    try {
+      await api.delete(`/api/shares/${deletingShare.id}`)
+      toast.success("Share link deleted")
+      setShares((prev) => prev.filter((s) => s.id !== deletingShare.id))
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to delete share link")
+    } finally {
+      setDeletingShare(null)
+      setIsDeleting(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -65,13 +93,14 @@ const SharedFile = () => {
               <div>
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                    {getFileIcon(share.resouce?.mime_type)}
+                    {getFileIcon(share.resource?.mime_type)}
                     <h4 className="text-sm font-semibold text-slate-900 truncate">
-                      {share.resouce?.name || "Shared item"}
+                      {share.resource?.name || "Shared item"}
                     </h4>
                   </div>
 
                   <button
+                    onClick={() => setDeletingShare(share)}
                     className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition shrink-0"
                     title="Delete Share Link"
                   >
@@ -87,7 +116,10 @@ const SharedFile = () => {
               </div>
 
               {/* card bottom */}
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+              <div
+                onClick={() => handleCopy(share.token)}
+                className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2"
+              >
                 <button className="inline-flex items-center gap-1.5 text-xs font-medium text-orange-600 hover:text-orange-700 transition">
                   {copiedToken === share.token ? (
                     <>
@@ -113,6 +145,19 @@ const SharedFile = () => {
             </div>
           ))}
         </div>
+      )}
+
+      {/* Confirm Delete Share Link Dialog */}
+      {deletingShare && (
+        <ConfirmDialog
+          isOpen={!!deletingShare}
+          onClose={() => setDeletingShare(null)}
+          onConfirm={handleDeleteShare}
+          title={`Delete share link for " ${deletingShare.resource?.name || "this item"}" ?`}
+          message="Anyone who currently has this link will no longer be able to access the shared file or folder."
+          confirmText="Delete Link"
+          isLoading={isDeleting}
+        />
       )}
     </div>
   )
