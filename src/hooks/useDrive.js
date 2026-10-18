@@ -129,8 +129,11 @@ const useDrive = () => {
    * Renombra un item (Polimórfico: acepta objeto o ID string)
    */
   const renameItem = (item, newName) => {
+    // Normalización: determina si el item es una carpeta o un archivo
     const isFolder = isFolderItem(item);
+    // Selecciona la ruta correspondiente ('folders' o 'files') para la petición
     const endpoint = isFolder ? "folders" : "files";
+    // Obtiene el ID del item
     const id = item?.id || item; // Normalización polimórfica
 
     return runAction(
