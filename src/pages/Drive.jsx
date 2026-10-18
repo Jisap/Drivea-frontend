@@ -8,6 +8,7 @@ import FilePreview from "../components/files/FilePreview";
 import ShareModal from "../components/files/ShareModal";
 import RenameModal from "../components/files/RenameModal";
 import MoveModal from "../components/files/MoveModal";
+import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 
 
 
@@ -24,6 +25,7 @@ const Drive = () => {
   const [renameItem, setRenameItem] = useState(null);
   const [moveItem, setMoveItem] = useState(null);
   const [deleteItem, setDeleteItem] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Sincroniza la carpeta activa en el contexto global y consulta los datos
   // cada vez que cambia la URL (/drive/:folderId), el filtro de búsqueda o el orden.
@@ -35,11 +37,14 @@ const Drive = () => {
 
   const handleConfirmDelete = async () => {
     if (!deleteItem) return;
+    setIsDeleting(true);
     const success = await removeDriveItem(deleteItem);
+    setIsDeleting(false);
     if (success) {
       setDeleteItem(null);
     }
-  }
+  };
+
 
   return (
     <div className="space-y-4">
@@ -66,9 +71,10 @@ const Drive = () => {
           isOpen={!!deleteItem}
           onClose={() => setDeleteItem(null)}
           onConfirm={handleConfirmDelete}
+          isLoading={isDeleting}
           title={`Move "${deleteItem.name}" to Trash`}
           message="You can restore this item from Trash at an time"
-          confirmTExt="Move to Trash"
+          confirmText="Move to Trash"
         />
       )}
     </div>

@@ -183,7 +183,7 @@ const useDrive = () => {
     const id = item?.id || item;
 
     return runAction(
-      () => api.delete(`/api/${endpoint}/${id}/delete`),
+      () => api.delete(`/api/${endpoint}/${id}`),
       `${isFolder ? "Folder" : "File"} moved to Trash`,
       "Error deleting item.",
       () => fetchDriveContent(currentFolderId, searchQuery, sortBy)
@@ -212,7 +212,7 @@ const useDrive = () => {
     const id = item?.id || item;
 
     return runAction(
-      () => api.delete(`/api/${endpoint}/${id}/permanent-delete`),
+      () => api.delete(`/api/${endpoint}/${id}/permanent`),
       "Item deleted permanently", "Error deleting item.",
     );
   };
