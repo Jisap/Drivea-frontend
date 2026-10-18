@@ -18,9 +18,11 @@ const RenameModal = ({ item, isOpen, onClose }) => {
     e.preventDefault()
     if (!name.trim() || !item) return;
     setIsLoading(true)
-    await renameItem(item, name.trim())
+    const success = await renameItem(item, name.trim())
     setIsLoading(false)
-    onClose()
+    if (success) {
+      onClose()
+    }
   }
 
   return (

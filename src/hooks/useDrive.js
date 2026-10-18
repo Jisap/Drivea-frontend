@@ -140,7 +140,7 @@ const useDrive = () => {
       () => api.patch(`/api/${endpoint}/${id}/rename`, { name: newName }),
       `${isFolder ? "Folder" : "File"} renamed`,
       "Error renaming item.",
-      () => fetchDriveContent()
+      () => fetchDriveContent(currentFolderId)
     );
   };
 
