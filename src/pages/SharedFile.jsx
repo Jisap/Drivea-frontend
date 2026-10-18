@@ -1,4 +1,4 @@
-import { Trash2Icon, UserIcon, UsersIcon } from "lucide-react";
+import { CheckIcon, CopyIcon, ExternalLink, Trash2Icon, UserIcon, UsersIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { EmptyState } from "../components/ui/EmptyState";
 import { Spinner } from "../components/ui/Spinner";
@@ -87,7 +87,29 @@ const SharedFile = () => {
               </div>
 
               {/* card bottom */}
-              <div></div>
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                <button className="inline-flex items-center gap-1.5 text-xs font-medium text-orange-600 hover:text-orange-700 transition">
+                  {copiedToken === share.token ? (
+                    <>
+                      <CheckIcon className="w-3.5 h-3.5 text-emerald-600" />
+                      <span className="text-emerald-600 font-semibold">Copied</span>
+                    </>
+                  ) : (
+                    <>
+                      <CopyIcon className="w-3.5 h-3.5" />
+                      <span>Copy Link</span>
+                    </>
+                  )}
+                </button>
+
+                <a
+                  href={`/s/${share.token}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition">
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
             </div>
           ))}
         </div>
