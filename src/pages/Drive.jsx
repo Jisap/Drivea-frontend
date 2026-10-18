@@ -33,6 +33,14 @@ const Drive = () => {
     fetchDriveContent(id, searchQuery, sortBy);
   }, [folderId, searchQuery, sortBy, fetchDriveContent, setCurrentFolderId]);
 
+  const handleConfirmDelete = async () => {
+    if (!deleteItem) return;
+    const success = await removeDriveItem(deleteItem);
+    if (success) {
+      setDeleteItem(null);
+    }
+  }
+
   return (
     <div className="space-y-4">
       {/* Breadcrumbs */}
@@ -53,6 +61,16 @@ const Drive = () => {
       {shareItem && <ShareModal item={shareItem} isOpen={!!shareItem} onClose={() => setShareItem(null)} />}
       {renameItem && <RenameModal item={renameItem} isOpen={!!renameItem} onClose={() => setRenameItem(null)} />}
       {moveItem && <MoveModal item={moveItem} isOpen={!!moveItem} onClose={() => setMoveItem(null)} />}
+      {deleteItem && (
+        <ConfirmDialog
+          isOpen={!!deleteItem}
+          onClose={() => setDeleteItem(null)}
+          onConfirm={handleConfirmDelete}
+          title={`Move "${deleteItem.name}" to Trash`}
+          message="You can restore this item from Trash at an time"
+          confirmTExt="Move to Trash"
+        />
+      )}
     </div>
   )
 }
