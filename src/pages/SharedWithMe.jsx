@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router-dom"
 import api from "../config/api"
 import { useEffect, useState } from "react"
 import { Spinner } from "../components/ui/Spinner";
-import { DownloadIcon, LockIcon } from "lucide-react";
+import { DownloadIcon, LockIcon, LucideFolder } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { formatBytes } from "../assets/assets";
 import { getFileIcon } from "../assets/assets";
@@ -101,8 +101,17 @@ const SharedWithMe = () => {
           </div>
         ) : (
           // folder view
-          <div>
+          <div className="max-w-2xl w-full p-8 bg-white border border-slate-200 rounded-3xl space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-orange-50 text-orange-600 border border-orange-100">
+                <LucideFolder className="size-6 fill-orange-500/20" />
+              </div>
 
+              <div>
+                <h2>{data.folder.name}</h2>
+                <p className="text-xs text-slate-500">Shared Folder by {data.owner?.name || "User"}</p>
+              </div>
+            </div>
           </div>
         )}
       </main>
