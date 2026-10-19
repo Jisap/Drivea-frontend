@@ -66,8 +66,11 @@ const FilePreview = ({ file, onClose }) => {
           }
         }
       })
-      .catch(() => {
-        if (isMounted) setError('Failed to load preview');     // Si hay error, muestra un mensaje
+      .catch((err) => {
+        if (isMounted) {
+          const message = err.response?.data?.error
+          setError(typeof message === "string" ? message : 'Failed to load preview');     // Si hay error, muestra un mensaje
+        }
       })
       .finally(() => {
         if (isMounted) setIsLoading(false);                    // Detiene el loading
