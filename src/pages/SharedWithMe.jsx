@@ -3,6 +3,9 @@ import api from "../config/api"
 import { useEffect, useState } from "react"
 import { Spinner } from "../components/ui/Spinner";
 import { LockIcon } from "lucide-react";
+import { Button } from "../components/ui/Button";
+import { formatBytes } from "../assets/assets";
+import { getFileIcon } from "../assets/assets";
 
 const SharedWithMe = () => {
 
@@ -53,10 +56,29 @@ const SharedWithMe = () => {
             <div className="size-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto border border-red-200">
               <LockIcon className="size-6" />
             </div>
+
+            <h3>Link Unavailable</h3>
+            <p>{error}</p>
+            <div className="pt-2">
+              <Link to="/">
+                <Button variant="secondary" size="sm">
+                  Go to Homepage
+                </Button>
+              </Link>
+            </div>
           </div>
         ) : data?.resource_type === "file" ? (
-          <div>
+          <div className="max-w-xl w-full p-8 bg-white border border-slate-200 rounded-3xl text-center space-y-6 animate-fade-in">
+            <div className="w-20 h-20 rounded-3xl bg-slate-100 border border-slate-200 flex items-center justify-center mx-auto">
+              {getFileIcon(data?.file.mime_type, "size-19")}
+            </div>
 
+            <div>
+              <h2 className="text-xl font-medium text-slate-900 mb-1">{data.file.name}</h2>
+              <p>
+                Size: {formatBytes(data.file)}
+              </p>
+            </div>
           </div>
         ) : (
           // folder view
