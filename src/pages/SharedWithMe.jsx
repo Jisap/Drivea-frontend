@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router-dom"
 import api from "../config/api"
 import { useEffect, useState } from "react"
 import { Spinner } from "../components/ui/Spinner";
-import { LockIcon } from "lucide-react";
+import { DownloadIcon, LockIcon } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { formatBytes } from "../assets/assets";
 import { getFileIcon } from "../assets/assets";
@@ -45,7 +45,7 @@ const SharedWithMe = () => {
       </header>
 
       {/* Content Container */}
-      <main className="flex-1 items-center justify-center p-6">
+      <main className="flex-1 flex items-center justify-center p-6">
         {isLoading ? (
           <div className="text-center space-y-3">
             <Spinner size="lg" className="text-orange-600" />
@@ -76,9 +76,28 @@ const SharedWithMe = () => {
             <div>
               <h2 className="text-xl font-medium text-slate-900 mb-1">{data.file.name}</h2>
               <p>
-                Size: {formatBytes(data.file)}
+                Size: {formatBytes(data.file)} · Shared by {data.owner?.name || "User"}
               </p>
             </div>
+
+            {data.permission === "download" ? (
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 font-medium">
+                This link grants <span className="text-orange-600 font-semibold">download-only</span> permission
+              </div>
+            ) : null}
+
+            {data.url && (
+              <a
+                href={data.url}
+                download={data.file.name}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-2 w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-semibold text-sm rounded-lg transition"
+              >
+                <DownloadIcon className="size-4" />
+                <span>Download File</span>
+              </a>
+            )}
           </div>
         ) : (
           // folder view
