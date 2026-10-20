@@ -79,6 +79,26 @@ const Trash = () => {
 
   const hasItems = files.length > 0 || folders.length > 0;
 
+  const handleAction = async (item, actionFn, isFolder) => {
+    const ok = await actionFn({
+      id: item.id,
+      item_type: isFolder ? "folder" : "file"
+    })
+
+    if (ok) {
+      setTrash((prev) => (
+        {
+          files: isFolder
+            ? prev.files
+            : prev.files.filter((f) => f.id !== item.id),
+          folders: isFolder
+            ? prev.folders.filter((f) => f.id !== item.id)
+            : prev.folders
+        }
+      ))
+    }
+  }
+
   const handleEmptyTrash = async () => {
     setIsEmptying(true);
     try {
