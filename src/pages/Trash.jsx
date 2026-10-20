@@ -8,6 +8,7 @@ import { Button } from "../components/ui/Button";
 import { EmptyState } from "../components/ui/EmptyState";
 import { Spinner } from "../components/ui/Spinner";
 import { formatBytes } from "../assets/assets";
+import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 
 
 const TrashItemCard = ({ item, isFolder, onRestore, onDelete }) => {
@@ -78,7 +79,20 @@ const Trash = () => {
 
   const hasItems = files.length > 0 || folders.length > 0;
 
-
+  const handleEmptyTrash = async () => {
+    setIsEmptying(true);
+    try {
+      await api.post("/api/trash/empty")
+      toast.success("Trash emptied.")
+      setTrash({ files: [], folders: [] })
+      await refreshUser();
+    } catch (error) {
+      toast.error("Failed to empty trash")
+    } finally {
+      setIsEmptying(false)
+      setShowEmptyConfirm(false)
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -130,9 +144,13 @@ const Trash = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {items.map((item) => (
-                    <div key={item.id}>
-                      {item.name}
-                    </div>
+                    <TrashItemCard
+                      key={item.id}
+                      item={item}
+                      isFolder={isFolder}
+                      onRestore={(it) => { }}
+                      onDelete={(it) => { }}
+                    />
                   ))}
                 </div>
               </div>
@@ -141,6 +159,15 @@ const Trash = () => {
           </div>
         )
       )}
+
+      <ConfirmDialog
+        isOpen={showEmptyConfirm}
+        onClose={() => setShowEmptyConfirm(false)}
+        onConfirm={handleEmptyTrash}
+        title="Empty Trash?"
+        message="This action cannot be undone. Are you sure you want to permanently delete all items in the trash?"
+        isLoading={isEmptying}
+      />
     </div>
   )
 }
