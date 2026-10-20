@@ -1,6 +1,36 @@
 import { Trash2Icon } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useDrive } from "../hooks/useDrive"
+import { useApp } from "../context/AppContext"
+import api from "../config/api";
+import toast from "react-hot-toast";
 
 const Trash = () => {
+
+  const [{ files, folders }, setTrash] = useState({ files: [], folders: [] })
+  const [isLoading, setIsLoading] = useState(false);
+  const [isEmptying, setIsEmptying] = useState(false);
+  const [showEmptyConfirm, setShowEmptyConfirm] = useState(false);
+
+  const { restoreItem, permanentDeleteItem } = useDrive();
+  const { refreshUser } = useApp();
+
+  const fetchTrash = async (params) => {
+    setIsLoading(true)
+    try {
+      const { data } = await api.get("/api/trash")
+      setTrash({ files: data.files || [], folders: data.folders })
+    } catch (error) {
+      toast.error("Error loading trash")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchTrash()
+  }, [])
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
