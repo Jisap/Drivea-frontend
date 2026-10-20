@@ -1,4 +1,4 @@
-import { Trash2Icon, TrashIcon } from "lucide-react"
+import { LucideFolder, Trash2Icon, TrashIcon } from "lucide-react"
 import { useState, useEffect } from "react"
 import useDrive from "../hooks/useDrive"
 import { useApp } from "../context/AppContext"
@@ -7,6 +7,34 @@ import toast from "react-hot-toast";
 import { Button } from "../components/ui/Button";
 import { EmptyState } from "../components/ui/EmptyState";
 import { Spinner } from "../components/ui/Spinner";
+import { formatBytes } from "../assets/assets";
+
+
+const TrashItemCard = ({ item, isFolder, onRestore, onDelete }) => {
+  return (
+    <div className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center justify-between">
+      <div className="flex items-center gap-3 min-w-0 pr-2">
+        {isFolder
+          ? <LucideFolder className="size-6 text-orange-600 shrink-0" />
+          : getFileIcon(item.mime_type)
+        }
+
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-slate-900 truncate">{item.name}</p>
+          {!isFolder && (
+            <p className="text-[11px] text-slate-500">
+              {formatBytes(item.size)}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div>
+
+      </div>
+    </div>
+  )
+}
 
 const Trash = () => {
 
