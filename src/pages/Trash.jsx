@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { Button } from "../components/ui/Button";
 import { EmptyState } from "../components/ui/EmptyState";
 import { Spinner } from "../components/ui/Spinner";
-import { formatBytes } from "../assets/assets";
+import { formatBytes, getFileIcon } from "../assets/assets";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 
 
@@ -79,18 +79,26 @@ const Trash = () => {
 
   const hasItems = files.length > 0 || folders.length > 0;
 
+  /**
+   * actionFn: Una función asíncrona que viene por parámetro.
+   * Al recibirla como argumento, se evita duplicar código para restaurar y borrar.
+   * */
   const handleAction = async (item, actionFn, isFolder) => {
+    // 1. Ejecutar la acción en el backend / servicio
     const ok = await actionFn({
       id: item.id,
       item_type: isFolder ? "folder" : "file"
     })
 
+    // 2. Si la acción fue exitosa, actualizar el estado local (UI)
     if (ok) {
       setTrash((prev) => (
         {
+          // Si NO era carpeta (era archivo), lo saca de prev.files con .filter()
           files: isFolder
             ? prev.files
             : prev.files.filter((f) => f.id !== item.id),
+          // Si SÍ era carpeta, la saca de prev.folders con .filter()
           folders: isFolder
             ? prev.folders.filter((f) => f.id !== item.id)
             : prev.folders
@@ -168,8 +176,8 @@ const Trash = () => {
                       key={item.id}
                       item={item}
                       isFolder={isFolder}
-                      onRestore={(it) => { }}
-                      onDelete={(it) => { }}
+                      onRestore={(it) => { handleAction(it, restoreItem, isFolder) }}
+                      onDelete={(it) => { handleAction(it, permanentDeleteItem, isFolder) }}
                     />
                   ))}
                 </div>

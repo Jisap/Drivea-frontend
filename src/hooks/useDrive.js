@@ -195,6 +195,7 @@ const useDrive = () => {
    * Restaura un item desde la papelera (Polimórfico)
    */
   const restoreItem = (item) => {
+    const isFolder = isFolderItem(item);
     const endpoint = isFolder ? "folders" : "files";
     const id = item?.id || item;
 
@@ -208,6 +209,7 @@ const useDrive = () => {
    * Elimina permanentemente un item desde la papelera 
    */
   const permanentDeleteItem = (item) => {
+    const isFolder = isFolderItem(item);
     const endpoint = isFolder ? "folders" : "files";
     const id = item?.id || item;
 
