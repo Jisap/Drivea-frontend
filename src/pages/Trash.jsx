@@ -1,9 +1,10 @@
-import { Trash2Icon } from "lucide-react"
+import { Trash2Icon, TrashIcon } from "lucide-react"
 import { useState, useEffect } from "react"
-import { useDrive } from "../hooks/useDrive"
+import useDrive from "../hooks/useDrive"
 import { useApp } from "../context/AppContext"
 import api from "../config/api";
 import toast from "react-hot-toast";
+import { Button } from "../components/ui/Button";
 
 const Trash = () => {
 
@@ -29,7 +30,11 @@ const Trash = () => {
 
   useEffect(() => {
     fetchTrash()
-  }, [])
+  }, []);
+
+  const hasItems = files.length > 0 || folders.length > 0;
+
+
 
   return (
     <div className="space-y-6">
@@ -44,6 +49,17 @@ const Trash = () => {
             <p className="text-xs text-slate-500">Items in trash are soft deleted</p>
           </div>
         </div>
+
+        {hasItems && (
+          <Button
+            variant="danger"
+            size="sm"
+            icon={TrashIcon}
+            onClick={() => { setShowEmptyConfirm(true) }}
+          >
+            Empty Trash
+          </Button>
+        )}
       </div>
     </div>
   )
