@@ -1,4 +1,4 @@
-import { LucideFolder, Trash2Icon, TrashIcon } from "lucide-react"
+import { LucideFolder, RotateCcwIcon, Trash2Icon, TrashIcon } from "lucide-react"
 import { useState, useEffect } from "react"
 import useDrive from "../hooks/useDrive"
 import { useApp } from "../context/AppContext"
@@ -29,8 +29,22 @@ const TrashItemCard = ({ item, isFolder, onRestore, onDelete }) => {
         </div>
       </div>
 
-      <div>
+      <div className="flex items-center gap-1 shrink-0">
+        <button
+          className="p-1.5 rounded-lg text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition"
+          title="Restore"
+          onClick={() => onRestore(item)}
+        >
+          <RotateCcwIcon className="size-4" />
+        </button>
 
+        <button
+          className="p-1.5 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition"
+          title="Delete Permanently"
+          onClick={() => onDelete(item)}
+        >
+          <TrashIcon className="size-4" />
+        </button>
       </div>
     </div>
   )
