@@ -5,6 +5,8 @@ import { useApp } from "../context/AppContext"
 import api from "../config/api";
 import toast from "react-hot-toast";
 import { Button } from "../components/ui/Button";
+import { EmptyState } from "../components/ui/EmptyState";
+import { Spinner } from "../components/ui/Spinner";
 
 const Trash = () => {
 
@@ -61,6 +63,42 @@ const Trash = () => {
           </Button>
         )}
       </div>
+
+      {isLoading ? (
+        <div className="py-20 flex justify-center">
+          <Spinner size="lg" className="text-orange-600" />
+        </div>
+      ) : (
+        !hasItems ? (
+          <EmptyState
+            title="Trash is Empty"
+            description="Items you delete will show up here before being permanently removed."
+            icon={Trash2Icon}
+          />
+        ) : (
+          <div className="space-y-6">
+            {[
+              { title: "Folders", items: folders, isFolder: true },
+              { title: "Files", items: files, isFolder: false }
+            ].filter(({ items }) => items.length > 0).map(({ title, items, isFolder }) => (
+              <div key={title}>
+                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                  {title}
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {items.map((item) => (
+                    <div key={item.id}>
+                      {item.name}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))
+            }
+          </div>
+        )
+      )}
     </div>
   )
 }
