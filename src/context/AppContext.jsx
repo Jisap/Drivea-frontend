@@ -14,7 +14,7 @@ export const AppProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   // Upload Global State
-  const [isUploading, setIsUploading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
   // Drive View State

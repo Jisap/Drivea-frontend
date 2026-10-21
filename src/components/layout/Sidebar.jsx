@@ -83,7 +83,7 @@ const Sidebar = ({ onCreateFolderClick, isMobileOpen, setIsMobileOpen }) => {
               <button
                 type="button"
                 disabled={isUploading}
-                className='w-full flex items-center justify-center gap-2 px-4 py-3 bg-orange-600 hover:bg-orange-700 text-white font-semibodl text-sm rounded-lg transition-all disabled:opacity-50 cursor-pointer'
+                className='w-full flex items-center justify-center gap-2 px-4 py-3 bg-orange-600 hover:bg-orange-700 text-white font-semibold text-sm rounded-lg transition-all disabled:opacity-50 cursor-pointer'
               >
                 <PlusIcon size={15} />
                 <span>New Item</span>
@@ -100,7 +100,7 @@ const Sidebar = ({ onCreateFolderClick, isMobileOpen, setIsMobileOpen }) => {
             </DropdownItem>
             <DropdownItem
               icon={FolderPlusIcon}
-              onClick={() => onCreateFolderClick}
+              onClick={onCreateFolderClick}
             >
               New Folder
             </DropdownItem>
