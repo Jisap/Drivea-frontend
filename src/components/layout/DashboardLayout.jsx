@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import CreateFolderModal from '../Folders/CreateFolderModal';
 
 const DashboardLayout = () => {
 
@@ -25,8 +26,13 @@ const DashboardLayout = () => {
         <main className='flex-1 p-4 md:p-6 overflow-y-auto'>
           <Outlet />
         </main>
-
       </div>
+
+      {/* Create Folder Modal */}
+      <CreateFolderModal
+        isOpen={isCreateFolderOpen}
+        onClose={() => setIsCreateFolderOpen(false)}
+      />
     </div>
   )
 }

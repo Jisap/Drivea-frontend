@@ -4,15 +4,32 @@ import { Modal } from "../ui/Modal"
 import { Input } from "../ui/Input"
 import { Button } from "../ui/Button"
 
-const CreateFolderModal = () => {
+const CreateFolderModal = ({ isOpen, onClose }) => {
 
   const [name, setName] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const { createFolder } = useDrive()
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+
+    setIsLoading(true);
+    try {
+      const success = await createFolder(name.trim());
+      if (success) {
+        setName("");
+        onClose();
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="NewFolder" onSubmit={handleSubmit}>
-      <form className="space-y-4">
+    <Modal isOpen={isOpen} onClose={onClose} title="New Folder">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           label="Folder Name"
           placeholder="Untitled Folder"
